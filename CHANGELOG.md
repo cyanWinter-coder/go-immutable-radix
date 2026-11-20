@@ -1,5 +1,9 @@
 # UNRELEASED
 
+FEATURES
+
+* Add `Tree.Diff`, `Tree.DiffWith` and `Tree.DiffEntries` to compute the added, removed and updated keys between two published trees. The comparison prunes subtrees shared by both trees instead of walking every leaf, reports each key once in stable key order, stops early when the callback returns false, and never mutates either tree.
+
 # 2.0.0 (December 15th, 2022)
 
 * Update API to use generics [[GH-43](https://github.com/hashicorp/go-immutable-radix/pull/43))

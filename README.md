@@ -71,3 +71,27 @@ for key, _, ok := it.Next(); ok; key, _, ok = it.Next() {
 //  010
 ```
 
+To stream only what changed between two published snapshots, use `Diff`. It
+compares the trees structurally, skipping subtrees they still share, so a small
+change to a large tree costs roughly the depth of the change rather than a full
+walk of both trees. Entries arrive once each, in key order, and returning false
+from the callback stops the comparison.
+
+```go
+snapshot := r // an older, still-published tree
+
+// r is newer than snapshot; the receiver is always the older side.
+complete := snapshot.Diff(r, func(e iradix.DiffEntry[int]) bool {
+    switch e.Kind {
+    case iradix.DiffAdded:
+        fmt.Printf("+ %s = %d\n", e.Key, e.New)
+    case iradix.DiffRemoved:
+        fmt.Printf("- %s (was %d)\n", e.Key, e.Old)
+    case iradix.DiffUpdated:
+        fmt.Printf("~ %s: %d -> %d\n", e.Key, e.Old, e.New)
+    }
+    return true // return false to stop early
+})
+```
+
+
